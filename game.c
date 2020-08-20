@@ -14,12 +14,10 @@ void drawBoard(){
 }
 void doXGo(){
     int entered=0;
-    char pos[3];
+    char pos[4];
     do{
         printf("please input where you want to put your x[example a1]: ");
-        fgets(pos,3,stdin);
-    int c;
-while ((c = getchar()) != '\n' && c != EOF) { }
+        fgets(pos,4,stdin);
         if(pos[0] >= 'a' && pos[0] <= 'c' && pos[1] > '0' && pos[1] <= '3'){
             entered = 1;
         }
