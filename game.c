@@ -7,9 +7,9 @@ int running;
 void drawBoard(){
     //print the a b c for location
     printf("   a   b   c\n");
-    for(int i=0;i<3;i++){
+    for(int i=0;i<9;i+=3){
         //prints each line and the number of the line for the user to input
-        printf("%d: %c | %c | %c \n",i+1, board[i], board[i+1], board[i+2]);
+        printf("%d: %c | %c | %c \n",1+(i+1)/3, board[i], board[i+1], board[i+2]);
     }
 }
 void doXGo(){
@@ -22,6 +22,8 @@ void doXGo(){
             entered = 1;
         }
     } while(!entered);
+    printf("%d",(pos[0]-'a')+3*(pos[1]-'1'));
+    board[(pos[0]-'a')+3*(pos[1]-'1')] = 'x';
     printf("you entered %s\n", pos);
 }
 void doOGo(){
