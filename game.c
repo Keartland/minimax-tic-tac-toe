@@ -4,12 +4,12 @@
 
 char board[10];
 int running;
-void drawBoard(){
+void drawBoard(char printedBoard[10]){
     //print the a b c for location
     printf("   a   b   c\n");
     for(int i=0;i<9;i+=3){
         //prints each line and the number of the line for the user to input
-        printf("%d: %c | %c | %c \n",1+(i+1)/3, board[i], board[i+1], board[i+2]);
+        printf("%d: %c | %c | %c \n",1+(i+1)/3, printedBoard[i], printedBoard[i+1], printedBoard[i+2]);
     }
 }
 void doGo(char letter){
@@ -22,14 +22,8 @@ void doGo(char letter){
             entered = 1;
         }
     } while(!entered);
-    printf("%d",(pos[0]-'a')+3*(pos[1]-'1'));
     board[(pos[0]-'a')+3*(pos[1]-'1')] = letter;
     printf("you entered %s\n", pos);
-}
-void doOGo(){
-}
-int getValue(){
-    
 }
 //returns wether the game is over by saying the player that wins, 0 is continue, 120 is player x, 111 is player o
 int checkIfContinue(char checkBoard[10]){
@@ -46,18 +40,71 @@ int checkIfContinue(char checkBoard[10]){
     if (checkBoard[2] == checkBoard[4] && checkBoard[2]==checkBoard[6] && checkBoard[2] != 32) return checkBoard[2];
     return 0;
 }
+
+int getValue(char toBeCopiedBoard[10], char curGo,char playerGo){
+    char checkBoard[10];
+    for (int i=0;i<10;i++){
+        checkBoard[i] = toBeCopiedBoard[i];
+    }
+    int win = checkIfContinue(checkBoard);
+    if(win != 0){
+        if (win == playerGo){
+            return 10;
+        } else { 
+            return -10;
+        }
+    } else{
+        int movePos[10];
+        for (int i=0;i<10;i++){
+            // if board at i is empty
+            movePos[i] = 0;
+            if(checkBoard[i] == 32){
+                printf("\n%c\n",curGo);
+                drawBoard(checkBoard);
+                checkBoard[i] = curGo;
+                char nextGo = curGo == 'x' ? 'o' : 'x'; 
+                printf("\n%c\n",nextGo);
+                int g = getValue(checkBoard, nextGo ,playerGo);
+                movePos[i] = g;
+                // set value for this move;
+            }
+        }
+
+        int bestMove;
+        if (curGo == playerGo){
+            int bestScore = -10;
+            for (int i=0;i<10;i++){
+                if (movePos[i] > bestScore){
+                    bestScore = movePos[i];
+                    bestMove = i;
+                }
+            }
+        } else {
+            int bestScore = 10;
+            for (int i=0;i<10;i++){
+                if (movePos[i] < bestScore){
+                    bestScore = movePos[i];
+                    bestMove = i;
+                }
+            }
+        }
+        return bestMove;
+    }
+}
 int main(){
     for(int i=0;i<10;i++){
         board[i] = ' ';
     }
-    int ended=0;
+    char ended=0;
     char cur = 'x';
     while(!ended){
-        drawBoard();
+        drawBoard(board);
+        int val = getValue(board, cur, cur);
+        printf("\nwinning pos for %c: %c%c\n",cur,'a' +  val%3,'1' + val/3  );
         doGo(cur);
         ended = checkIfContinue(board);
-        if (cur == 'x') { cur = 'o' }
-        else { cur = 'x' }
+        if (cur == 'x') { cur = 'o' ;}
+        else { cur = 'x' ;}
     }
     printf("\nwinner: %c\n", ended);
 }
