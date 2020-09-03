@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 
-char board[10];
+char board[9];
 int running;
 void drawBoard(char printedBoard[10]){
     //print the a b c for location
@@ -38,50 +38,55 @@ int checkIfContinue(char checkBoard[10]){
     //diags
     if (checkBoard[0] == checkBoard[4] && checkBoard[0]==checkBoard[8] && checkBoard[0] != 32) return checkBoard[0];
     if (checkBoard[2] == checkBoard[4] && checkBoard[2]==checkBoard[6] && checkBoard[2] != 32) return checkBoard[2];
-    return 0;
+    for(int i=0;i<9;i++){
+        if(checkBoard[i] == 32){
+            return 0;
+        }
+    }
+    return 'd';
 }
 
 int getValue(char toBeCopiedBoard[10], char curGo,char playerGo){
     char checkBoard[10];
-    for (int i=0;i<10;i++){
+    for (int i=0;i<9;i++){
         checkBoard[i] = toBeCopiedBoard[i];
     }
     int win = checkIfContinue(checkBoard);
     if(win != 0){
         if (win == playerGo){
             return 10;
+        } else if (win == 'd'){
+            return 0;
         } else { 
             return -10;
         }
-    } else{
+    } else {
         int movePos[10];
-        for (int i=0;i<10;i++){
+        for (int i=0;i<9;i++){
             // if board at i is empty
             movePos[i] = 0;
             if(checkBoard[i] == 32){
-                printf("\n%c\n",curGo);
-                drawBoard(checkBoard);
                 checkBoard[i] = curGo;
                 char nextGo = curGo == 'x' ? 'o' : 'x'; 
-                printf("\n%c\n",nextGo);
                 int g = getValue(checkBoard, nextGo ,playerGo);
                 movePos[i] = g;
                 // set value for this move;
             }
         }
 
+
         int bestMove;
         if (curGo == playerGo){
-            int bestScore = -10;
-            for (int i=0;i<10;i++){
+            int bestScore = -10000;
+            for (int i=0;i<9;i++){
                 if (movePos[i] > bestScore){
                     bestScore = movePos[i];
                     bestMove = i;
                 }
             }
         } else {
-            int bestScore = 10;
-            for (int i=0;i<10;i++){
+            int bestScore = 10000;
+            for (int i=0;i<9;i++){
                 if (movePos[i] < bestScore){
                     bestScore = movePos[i];
                     bestMove = i;
@@ -92,7 +97,7 @@ int getValue(char toBeCopiedBoard[10], char curGo,char playerGo){
     }
 }
 int main(){
-    for(int i=0;i<10;i++){
+    for(int i=0;i<9;i++){
         board[i] = ' ';
     }
     char ended=0;
@@ -100,11 +105,10 @@ int main(){
     while(!ended){
         drawBoard(board);
         int val = getValue(board, cur, cur);
-        printf("\nwinning pos for %c: %c%c\n",cur,'a' +  val%3,'1' + val/3  );
+        printf("\nwinning pos for %c: %c%c %d\n",cur,'a' +  val%3,'1' + val/3, val);
         doGo(cur);
         ended = checkIfContinue(board);
-        if (cur == 'x') { cur = 'o' ;}
-        else { cur = 'x' ;}
+        cur = cur == 'x' ? 'o' : 'x'; 
     }
     printf("\nwinner: %c\n", ended);
 }
